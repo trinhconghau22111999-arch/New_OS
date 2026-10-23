@@ -37,6 +37,22 @@ jobs:
             echo "KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
           fi
 
+      - name: Build app phụ (Trình duyệt + Ổ mềm, Gecko) và đóng gói vào app chính
+        shell: bash
+        run: |
+          set -o pipefail
+          gradle :web:assembleRelease --no-daemon -Pabis="${{ github.event.inputs.abis || 'x86' }}" 2>&1 | tee build-web.log || {
+            grep -E "^e: |error:|Caused by|Missing class|R8: |ERROR:|What went wrong|Execution failed|Could not |Unresolved" -A3 build-web.log | cut -c1-400 | head -80 | while IFS= read -r l; do echo "::error::${l}"; done
+            exit 1
+          }
+          mkdir -p app/src/main/assets/web
+          cp web/build/outputs/apk/release/*.apk app/src/main/assets/web/web.apk
+          ls -l app/src/main/assets/web/web.apk
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
       - name: Build APK
         shell: bash
         env:
