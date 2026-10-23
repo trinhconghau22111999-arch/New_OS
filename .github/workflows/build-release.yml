@@ -37,23 +37,7 @@ jobs:
             echo "KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
           fi
 
-      - name: Build app phụ (Trình duyệt + Ổ mềm, Gecko) và đóng gói vào app chính
-        shell: bash
-        run: |
-          set -o pipefail
-          gradle :web:assembleRelease --no-daemon -Pabis="${{ github.event.inputs.abis || 'x86' }}" 2>&1 | tee build-web.log || {
-            grep -E "^e: |error:|Caused by|Missing class|R8: |ERROR:|What went wrong|Execution failed|Could not |Unresolved" -A3 build-web.log | cut -c1-400 | head -80 | while IFS= read -r l; do echo "::error::${l}"; done
-            exit 1
-          }
-          mkdir -p app/src/main/assets/web
-          cp web/build/outputs/apk/release/*.apk app/src/main/assets/web/web.apk
-          ls -l app/src/main/assets/web/web.apk
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-
-      - name: Build APK
+      - name: Build APK (app chính + app phụ)
         shell: bash
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -64,6 +48,8 @@ jobs:
       - name: Lưu APK để tải
         uses: actions/upload-artifact@v4
         with:
-          name: DesktopMiniLauncher-apk
-          path: app/build/outputs/apk/release/*.apk
+          name: NewOS-apk
+          path: |
+            app/build/outputs/apk/release/*.apk
+            web/build/outputs/apk/release/*.apk
           retention-days: 7
