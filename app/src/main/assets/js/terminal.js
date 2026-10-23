@@ -64,13 +64,13 @@ function buildTerminal(b,w){
         break}
       case 'neofetch':{
         const nv=navigator;
-        print('   ✦        '+userName().toLowerCase().replace(/\s+/g,'')+'@desktop-mini\n  ✦ ✦       ----------------\n ✦ ✦ ✦      OS: Desktop Mini 26\n  ✦ ✦       Trình duyệt: '+(nv.platform||'?')+'\n   ✦        Màn hình: '+screen.width+'x'+screen.height+'\n            CPU: '+(nv.hardwareConcurrency||'?')+' lõi\n            Bộ nhớ: '+(nv.deviceMemory?nv.deviceMemory+' GB':'?')+'\n            Giao diện: '+(isDark()?'Tối':'Sáng'));
+        print('   ✦        '+userName().toLowerCase().replace(/\s+/g,'')+'@desktop-mini\n  ✦ ✦       ----------------\n ✦ ✦ ✦      OS: New OS 26\n  ✦ ✦       Trình duyệt: '+(nv.platform||'?')+'\n   ✦        Màn hình: '+screen.width+'x'+screen.height+'\n            CPU: '+(nv.hardwareConcurrency||'?')+' lõi\n            Bộ nhớ: '+(nv.deviceMemory?nv.deviceMemory+' GB':'?')+'\n            Giao diện: '+(isDark()?'Tối':'Sáng'));
         break}
       default:print('zsh: không tìm thấy lệnh: '+cmd,'er');
     }
   }
   out.addEventListener('click',()=>{const i=$('.tin',out);if(i&&!getSelection().toString())i.focus()});
-  print('Desktop Mini Terminal. Gõ "help" để xem các lệnh.');
+  print('New OS Terminal. Gõ "help" để xem các lệnh.');
   prompt();
   live(w,'fs',()=>{});
   return {};

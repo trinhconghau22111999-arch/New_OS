@@ -31,7 +31,7 @@ function buildBrowser(b,w){
   }
   function page(u){
     if(u==='dm://start')return '<div class="bst"><h1>Trang chủ</h1><form class="bsf"><input type="text" placeholder="Tìm kiếm hoặc nhập địa chỉ" aria-label="Tìm kiếm" autocomplete="off"></form><h3>Mục yêu thích</h3><div class="favs">'+FAV.map(f=>'<a class="fv" href="'+f[1]+'" target="_blank" rel="noopener noreferrer"><i style="background:'+f[2]+'">'+f[0][0]+'</i><span>'+f[0]+'</span></a>').join('')+'</div><p class="note">Trang web bên ngoài sẽ mở trong thẻ trình duyệt thật, vì cửa sổ này không nhúng được trang web khác.</p><div class="lks"><button class="lnk" data-go="dm://gioi-thieu">Giới thiệu</button><button class="lnk" data-go="dm://lich-su">Lịch sử</button></div></div>';
-    if(u==='dm://gioi-thieu')return '<div class="bst"><h1>Giới thiệu</h1><p>Đây là trình duyệt mô phỏng trong Desktop Mini. Nó có thẻ, lịch sử, tìm kiếm trong máy và liên kết ra web thật.</p></div>';
+    if(u==='dm://gioi-thieu')return '<div class="bst"><h1>Giới thiệu</h1><p>Đây là trình duyệt mô phỏng trong New OS. Nó có thẻ, lịch sử, tìm kiếm trong máy và liên kết ra web thật.</p></div>';
     if(u==='dm://lich-su')return '<div class="bst"><h1>Lịch sử</h1>'+(visited.length?'<ul class="hl">'+visited.map(v=>'<li><button class="lnk" data-go="'+esc(v)+'">'+esc(label(v))+'</button></li>').join('')+'</ul>':'<p>Chưa có trang nào.</p>')+'</div>';
     if(u.indexOf('dm://search')===0){
       const q=decodeURIComponent(u.split('q=')[1]||''), hits=localHits(q);

@@ -244,7 +244,7 @@ class YouTubeActivity : Activity() {
         when {
             customView != null -> hideCustomView()
             web.canGoBack() -> web.goBack()
-            else -> super.onBackPressed()                   // hết trang để lùi: đóng app, về Desktop Mini
+            else -> super.onBackPressed()                   // hết trang để lùi: đóng app, về New OS
         }
     }
 

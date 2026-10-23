@@ -86,7 +86,7 @@ private const val COLOR_TAB_TEXT = 0xFF5A4A7A.toInt()
 @Suppress("DEPRECATION")
 /**
  * Trình duyệt Webandr đầy đủ (thẻ, dấu sao, dịch, chụp màn hình, tải xuống, tách đôi, mật khẩu...).
- * Chạy được theo hai kiểu: nhúng trong cửa sổ "Duyệt web" của Desktop Mini (MainActivity) hoặc trong màn hình riêng (WebBrowserActivity).
+ * Chạy được theo hai kiểu: nhúng trong cửa sổ "Duyệt web" của New OS (MainActivity) hoặc trong màn hình riêng (WebBrowserActivity).
  * Mọi thứ cần quyền Activity (cửa sổ, xin quyền, mở màn hình chọn tệp...) đi qua [act].
  */
 class BrowserHost(private val act: Activity, private val onClose: () -> Unit) : ContextWrapper(act) {
@@ -614,7 +614,7 @@ class BrowserHost(private val act: Activity, private val onClose: () -> Unit) : 
 
     // Ve man hinh chinh Android; app van chay nen, mo lai se giu nguyen cac tab.
     private fun goHome() {
-        // Nhúng trong Desktop Mini: đóng cửa sổ Duyệt web; màn hình riêng: đóng màn hình, về Desktop Mini
+        // Nhúng trong New OS: đóng cửa sổ Duyệt web; màn hình riêng: đóng màn hình, về New OS
         finish()
     }
 

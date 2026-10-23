@@ -22,7 +22,7 @@ import org.mozilla.geckoview.GeckoView;
 import org.mozilla.geckoview.WebResponse;
 
 /**
- * "Ổ mềm" của Desktop Mini = Google Drive 3 hồ sơ (Ảnh / Video / Tệp), chạy bằng Gecko trong app phụ riêng.
+ * "Ổ mềm" của New OS = Google Drive 3 hồ sơ (Ảnh / Video / Tệp), chạy bằng Gecko trong app phụ riêng.
  * Mỗi hồ sơ có kho cookie riêng (contextId) nên đăng nhập 3 tài khoản Google khác nhau mà không lẫn nhau.
  * Nút "Tải lên": chọn tệp trong máy rồi tự bấm Mới → Tải tệp lên trong Drive (tiện ích dmdrive trong assets).
  */

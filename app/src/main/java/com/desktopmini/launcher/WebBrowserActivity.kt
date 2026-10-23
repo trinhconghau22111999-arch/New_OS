@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 
 /**
- * Màn hình riêng của trình duyệt Webandr (dự phòng, ví dụ mở từ ngoài). Trong Desktop Mini, \"Duyệt web\" chạy nhúng
+ * Màn hình riêng của trình duyệt Webandr (dự phòng, ví dụ mở từ ngoài). Trong New OS, \"Duyệt web\" chạy nhúng
  * trong cửa sổ bằng cùng một lõi [BrowserHost], nên hai bên có chung thẻ, dấu sao, mật khẩu...
  */
 class WebBrowserActivity : Activity() {

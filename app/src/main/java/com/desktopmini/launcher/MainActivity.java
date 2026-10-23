@@ -380,12 +380,12 @@ public class MainActivity extends Activity {
         inFg = false; undimIdle();
         if (browserHost != null) { try { browserHost.onPause(); } catch (Exception e) { } }
         if (wordHost != null) wordHost.save();
-        /* Tối ưu: rời Desktop Mini thì tạm dừng mọi trang web nhúng (YouTube, Zalo, Office...) cho đỡ tốn pin/RAM, như ứng dụng ở nền trên điện thoại */
+        /* Tối ưu: rời New OS thì tạm dừng mọi trang web nhúng (YouTube, Zalo, Office...) cho đỡ tốn pin/RAM, như ứng dụng ở nền trên điện thoại */
         for (java.util.Map.Entry<String, WebView> e : ext.entrySet()) extPause(e.getKey(), e.getValue());
         for (String k : ext.keySet()) markExtHidden(k);
     }
 
-    /** Tạm dừng trang web nhúng khi bị ẩn. Riêng YouTube đang phát video/nhạc thì KHÔNG tạm dừng: cứ phát tiếp dù cửa sổ bị thu nhỏ, bị app khác che hoặc rời khỏi Desktop Mini. */
+    /** Tạm dừng trang web nhúng khi bị ẩn. Riêng YouTube đang phát video/nhạc thì KHÔNG tạm dừng: cứ phát tiếp dù cửa sổ bị thu nhỏ, bị app khác che hoặc rời khỏi New OS. */
     void extPause(String key, WebView v) {
         if (v == null) return;
         if ("youtube".equals(key)) {
@@ -536,7 +536,7 @@ public class MainActivity extends Activity {
         return MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
     }
 
-    /** Desktop Mini có đang là màn hình chính mặc định của Android không. */
+    /** New OS có đang là màn hình chính mặc định của Android không. */
     boolean isDefaultHome() {
         try {
             ResolveInfo r = getPackageManager().resolveActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), PackageManager.MATCH_DEFAULT_ONLY);
@@ -612,7 +612,7 @@ public class MainActivity extends Activity {
     private void askSecureWrite() {
         new android.app.AlertDialog.Builder(this)
             .setTitle("Ẩn thanh trạng thái và thanh điều hướng")
-            .setMessage("Để ẩn hẳn thanh thông báo và thanh điều hướng của hệ thống khi mở app khác, Desktop Mini cần quyền đặc biệt WRITE_SECURE_SETTINGS.\n\n"
+            .setMessage("Để ẩn hẳn thanh thông báo và thanh điều hướng của hệ thống khi mở app khác, New OS cần quyền đặc biệt WRITE_SECURE_SETTINGS.\n\n"
                 + "Android không có hộp xin quyền này, nên phải cấp bằng một trong hai cách:\n"
                 + "• Máy đã root: bấm \"Cấp bằng root\".\n"
                 + "• Máy tính: nối adb rồi chạy\nadb shell " + SS_CMD)
@@ -1115,7 +1115,7 @@ public class MainActivity extends Activity {
     /* ================= App phụ "Trình duyệt + Ổ mềm" (Gecko), tách riêng khỏi WebView giao diện =================
      * Hai app này dùng lõi Gecko (Firefox) nên chạy trong app riêng (com.desktopmini.web); app chính chỉ dùng WebView hệ thống.
      * APK app phụ đóng gói sẵn trong assets/web/web.apk, app chính hỏi cài (hoặc cập nhật) ngay lần mở đầu tiên. Biểu tượng vẫn nằm trên Dock/Launchpad như cũ. */
-    static final String WEB_PKG = "com.desktopmini.web";
+    static final String WEB_PKG = "com.newos.web";
     private boolean companionAsked;
     volatile boolean htmlEditing = false;
 
@@ -1159,7 +1159,7 @@ public class MainActivity extends Activity {
         try {
             new android.app.AlertDialog.Builder(this)
                 .setTitle(update ? "Cập nhật app phụ" : "Cài app phụ Trình duyệt + Ổ mềm")
-                .setMessage("\"Trình duyệt\" và \"Ổ mềm\" chạy trong một app phụ riêng, không dùng chung WebView với giao diện chính nên hết xung đột/văng. App phụ đi kèm sẵn trong Desktop Mini.\n\nBấm \"Cài ngay\" rồi xác nhận cài đặt của Android (cần cho phép cài từ nguồn này nếu máy hỏi). Biểu tượng vẫn nằm trên Dock/Launchpad như cũ.")
+                .setMessage("\"Trình duyệt\" và \"Ổ mềm\" chạy trong một app phụ riêng, không dùng chung WebView với giao diện chính nên hết xung đột/văng. App phụ đi kèm sẵn trong New OS.\n\nBấm \"Cài ngay\" rồi xác nhận cài đặt của Android (cần cho phép cài từ nguồn này nếu máy hỏi). Biểu tượng vẫn nằm trên Dock/Launchpad như cũ.")
                 .setPositiveButton("Cài ngay", new android.content.DialogInterface.OnClickListener() { public void onClick(android.content.DialogInterface d, int w) { installCompanion(); } })
                 .setNegativeButton("Để sau", null)
                 .show();
@@ -1508,11 +1508,11 @@ public class MainActivity extends Activity {
     private void showOldWebViewDialog(int v) {
         final java.util.List<String> parts = bundledWebViewParts();
         final boolean has = !parts.isEmpty();
-        String msg = "Giao diện Desktop Mini chạy trên \"Android System WebView\". Máy đang dùng bản Chrome " + v
+        String msg = "Giao diện New OS chạy trên \"Android System WebView\". Máy đang dùng bản Chrome " + v
             + " (cần từ 105 trở lên) nên giao diện có thể bị lỗi, văng hoặc trắng màn hình.\n\n"
             + (has
-                ? "Bấm \"Cài WebView ngay\" để cài bản WebView đi kèm trong app, xong mở lại Desktop Mini.\n\nNếu máy báo không cho cài từ nguồn này, hãy bật quyền cho Desktop Mini rồi bấm lại."
-                : "Bấm \"Mở trang cập nhật\" để cập nhật \"Android System WebView\" trên Google Play, xong mở lại Desktop Mini.");
+                ? "Bấm \"Cài WebView ngay\" để cài bản WebView đi kèm trong app, xong mở lại New OS.\n\nNếu máy báo không cho cài từ nguồn này, hãy bật quyền cho New OS rồi bấm lại."
+                : "Bấm \"Mở trang cập nhật\" để cập nhật \"Android System WebView\" trên Google Play, xong mở lại New OS.");
         try {
             new android.app.AlertDialog.Builder(this)
                 .setTitle("WebView của máy quá cũ")
@@ -1577,7 +1577,7 @@ public class MainActivity extends Activity {
     private void launchApkInstall(java.io.File f, boolean webview) {
         try {
             if (Build.VERSION.SDK_INT >= 26 && !getPackageManager().canRequestPackageInstalls()) {
-                android.widget.Toast.makeText(this, "Hãy bật \"Cho phép từ nguồn này\" cho Desktop Mini rồi thử cài lại.", android.widget.Toast.LENGTH_LONG).show();
+                android.widget.Toast.makeText(this, "Hãy bật \"Cho phép từ nguồn này\" cho New OS rồi thử cài lại.", android.widget.Toast.LENGTH_LONG).show();
                 startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, android.net.Uri.parse("package:" + getPackageName())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 return;
             }

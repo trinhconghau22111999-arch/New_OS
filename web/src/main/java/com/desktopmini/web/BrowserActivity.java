@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * "Trình duyệt" của Desktop Mini: trình duyệt Gecko (Firefox) chạy trong app phụ riêng, không dùng chung tiến trình với WebView hệ thống của app chính.
+ * "Trình duyệt" của New OS: trình duyệt Gecko (Firefox) chạy trong app phụ riêng, không dùng chung tiến trình với WebView hệ thống của app chính.
  * Có thẻ (tab), thanh địa chỉ, dấu trang, lịch sử, tải xuống.
  */
 public class BrowserActivity extends Activity implements Downloads.Listener {

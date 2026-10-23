@@ -46,7 +46,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Phần lõi của app "Gõ văn bản" (trình soạn thảo kiểu Word, chép từ repo Word, chạy offline).
- * Dùng chung cho cửa sổ nhúng trong Desktop Mini (MainActivity) và màn hình riêng cũ (TypingActivity):
+ * Dùng chung cho cửa sổ nhúng trong New OS (MainActivity) và màn hình riêng cũ (TypingActivity):
  * nạp trang qua WebViewAssetLoader, cầu nối AndroidBridge (lưu tệp, xuất PDF, chia sẻ, clipboard, đọc thành tiếng, in).
  */
 class WordHost(
@@ -121,7 +121,7 @@ class WordHost(
         @JavascriptInterface
         fun stopSpeak() { act.runOnUiThread { tts?.stop() } }
 
-        /** Nút ✕ trong trang: về màn hình Desktop Mini (trang đã tự lưu trước đó). */
+        /** Nút ✕ trong trang: về màn hình New OS (trang đã tự lưu trước đó). */
         @JavascriptInterface
         fun goHome() { act.runOnUiThread { onClose() } }
 

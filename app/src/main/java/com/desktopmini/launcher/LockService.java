@@ -64,7 +64,7 @@ public class LockService extends AccessibilityService {
         c.getSharedPreferences(PK, 0).edit().putBoolean("barlock", on).apply();
         final LockService s = inst; if (s != null) s.barLock = on;
     }
-    /** Ghi nhớ app ngoài vừa mở từ Dock nổi (mới nhất đứng đầu) để thẻ đa nhiệm của Desktop Mini hiện đủ. */
+    /** Ghi nhớ app ngoài vừa mở từ Dock nổi (mới nhất đứng đầu) để thẻ đa nhiệm của New OS hiện đủ. */
     public static void noteExt(Context c, String pk) {
         if (pk == null || pk.equals(c.getPackageName())) return;
         try {
@@ -83,7 +83,7 @@ public class LockService extends AccessibilityService {
     }
     public static boolean isBarLock(Context c) { return c.getSharedPreferences(PK, 0).getBoolean("barlock", true); }
 
-    /** Giao diện Desktop Mini đẩy danh sách icon Dock (JSON: id, name, bg, g) sang để vẽ ở Dock nổi. */
+    /** Giao diện New OS đẩy danh sách icon Dock (JSON: id, name, bg, g) sang để vẽ ở Dock nổi. */
     public static void saveData(Context c, String json) {
         c.getSharedPreferences(PK, 0).edit().putString("data", json == null || json.length() == 0 ? "[]" : json).apply();
         final LockService s = inst; if (s != null) s.h.post(new Runnable() { public void run() { s.pushDockData(); } });
@@ -108,7 +108,7 @@ public class LockService extends AccessibilityService {
 
     @Override protected void onServiceConnected() {
         inst = this; wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        ScreenTime.start(this); /* đo thời gian sáng màn hình ngay cả khi Desktop Mini không hiện */
+        ScreenTime.start(this); /* đo thời gian sáng màn hình ngay cả khi New OS không hiện */
         barLock = isBarLock(this);
         loadWallFiles();
         frontGateUntil = android.os.SystemClock.uptimeMillis() + 800; /* chờ biết đang ở Desktop hay app khác rồi mới vẽ Dock: khỏi đổi cỡ nhiều lần lúc mới vào */
@@ -251,7 +251,7 @@ public class LockService extends AccessibilityService {
         dismissPop();
         updateTopBar();
         updateDockBar();
-        applyDockBase(); /* ở app ngoài: Dock cố định 53%; ở Desktop Mini: theo cỡ người dùng chỉnh */
+        applyDockBase(); /* ở app ngoài: Dock cố định 53%; ở New OS: theo cỡ người dùng chỉnh */
     }
     /** MainActivity báo đã lên trước: chắc chắn hơn chờ sự kiện trợ năng (lúc mới mở app launcherFront còn mặc định false làm Dock đo sai cỡ). */
     public static void launcherResumed() {
@@ -265,7 +265,7 @@ public class LockService extends AccessibilityService {
         return p;
     }
 
-    /** Bấm nút: đưa Desktop Mini lên trước (MainActivity tự thu nhỏ mọi cửa sổ để hiện màn hình Desktop). */
+    /** Bấm nút: đưa New OS lên trước (MainActivity tự thu nhỏ mọi cửa sổ để hiện màn hình Desktop). */
     private void goDesktop() {
         MainActivity.leaveFullscreen(); videoFull = false;
         try {
@@ -290,7 +290,7 @@ public class LockService extends AccessibilityService {
 
     /* ================= Thanh menu nổi (phủ lên thanh trạng thái của hệ thống) =================
      * Cửa sổ riêng, độc lập với nút Desktop: có cờ bật/tắt riêng, tự thêm/bỏ riêng.
-     * Chỉ hiện khi đang ở app ngoài (trong Desktop Mini đã có thanh menu HTML), tự ẩn khi app ngoài chạy toàn màn hình. */
+     * Chỉ hiện khi đang ở app ngoài (trong New OS đã có thanh menu HTML), tự ẩn khi app ngoài chạy toàn màn hình. */
     private TopBar topBar;
     private WindowManager.LayoutParams topLp;
     private String fgLabel = "";
@@ -332,7 +332,7 @@ public class LockService extends AccessibilityService {
         return false;
     }
 
-    /* Trạng thái do giao diện Desktop Mini đẩy sang (tên app đang chọn, chiều cao thanh, đang khóa màn hình...) */
+    /* Trạng thái do giao diện New OS đẩy sang (tên app đang chọn, chiều cao thanh, đang khóa màn hình...) */
     private static volatile String barApp = "";
     private static volatile boolean barHide = false;
     private static volatile int barGeomDp = 0;
@@ -349,8 +349,8 @@ public class LockService extends AccessibilityService {
         final LockService s = inst; if (s != null) s.h.post(new Runnable() { public void run() { s.removeTopBar(); s.updateTopBar(); } });
     }
 
-    /** Đưa Desktop Mini lên trước và bấm nút tương ứng của thanh menu HTML (khi đang ở Desktop Mini thì bấm thẳng, không chuyển màn hình). */
-    /** Chạm 2 lần chỗ trống trên Dock nổi: đưa Desktop Mini lên trước và mở đa nhiệm (giống chạm 2 lần chỗ trống Desktop). */
+    /** Đưa New OS lên trước và bấm nút tương ứng của thanh menu HTML (khi đang ở New OS thì bấm thẳng, không chuyển màn hình). */
+    /** Chạm 2 lần chỗ trống trên Dock nổi: đưa New OS lên trước và mở đa nhiệm (giống chạm 2 lần chỗ trống Desktop). */
     private void openMultitask() {
         try {
             startActivity(new Intent(this, MainActivity.class)
@@ -374,7 +374,7 @@ public class LockService extends AccessibilityService {
         } catch (Exception e) { }
     }
     private void openInLauncher(String app) { openInLauncher(app, false); }
-    /** toggle = bấm icon trên Dock nổi: nếu Desktop Mini đang ở trước và app đó đang mở ở trên cùng thì thu xuống (như nút −). */
+    /** toggle = bấm icon trên Dock nổi: nếu New OS đang ở trước và app đó đang mở ở trên cùng thì thu xuống (như nút −). */
     private void openInLauncher(String app, boolean toggle) {
         MainActivity.leaveFullscreen(); videoFull = false;
         try {
@@ -385,7 +385,7 @@ public class LockService extends AccessibilityService {
     }
     private void startSafe(Intent i) { try { startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)); } catch (Exception e) { } }
 
-    /** Chạm vào thanh: ở Desktop Mini -> menu HTML thật; ở app ngoài -> menu thả xuống gốc, mở thẳng trên app đang dùng. */
+    /** Chạm vào thanh: ở New OS -> menu HTML thật; ở app ngoài -> menu thả xuống gốc, mở thẳng trên app đang dùng. */
     private void menuTap(String id) {
         if (launcherFront) { dismissPop(); forward(id); return; }
         if (id.equals(popId)) { dismissPop(); return; }
@@ -418,7 +418,7 @@ public class LockService extends AccessibilityService {
             if (Build.VERSION.SDK_INT >= 28) { performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN); return; }
             startSafe(new Intent(android.app.admin.DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
                 .putExtra(android.app.admin.DevicePolicyManager.EXTRA_DEVICE_ADMIN, cn)
-                .putExtra(android.app.admin.DevicePolicyManager.EXTRA_ADD_EXPLANATION, "Cho phép Desktop Mini tắt màn hình khi bạn bấm Tắt máy. Quyền này chỉ dùng để khóa màn hình."));
+                .putExtra(android.app.admin.DevicePolicyManager.EXTRA_ADD_EXPLANATION, "Cho phép New OS tắt màn hình khi bạn bấm Tắt máy. Quyền này chỉ dùng để khóa màn hình."));
         } catch (Exception e) { }
     }
     private boolean isDefaultHomeNow() {
@@ -429,16 +429,16 @@ public class LockService extends AccessibilityService {
     }
     private android.media.AudioManager audio() { return (android.media.AudioManager) getSystemService(Context.AUDIO_SERVICE); }
 
-    /** Dựng danh sách mục cho nút `id`; trả false nếu nút này không có menu gốc (sẽ chuyển sang Desktop Mini). */
+    /** Dựng danh sách mục cho nút `id`; trả false nếu nút này không có menu gốc (sẽ chuyển sang New OS). */
     private boolean showPop(String id) {
         java.util.ArrayList<PI> L = new java.util.ArrayList<PI>();
         if ("logo".equals(id)) {
-            L.add(pItem("Giới thiệu về Desktop Mini", new Runnable() { public void run() { openInLauncher("about"); } }));
+            L.add(pItem("Giới thiệu về New OS", new Runnable() { public void run() { openInLauncher("about"); } }));
             L.add(pSep());
             L.add(pItem("Cài đặt hệ thống…", new Runnable() { public void run() { openInLauncher("settings"); } }));
             L.add(pItem("Buộc thoát…", new Runnable() { public void run() { openInLauncher("forcequit"); } }));
             L.add(pSep());
-            if (isDefaultHomeNow()) L.add(pText("Desktop Mini là màn hình chính mặc định ✓"));
+            if (isDefaultHomeNow()) L.add(pText("New OS là màn hình chính mặc định ✓"));
             else L.add(pItem("Đặt làm launcher mặc định…", new Runnable() { public void run() { startSafe(new Intent(Settings.ACTION_HOME_SETTINGS)); } }));
             L.add(pItem("Khởi động lại…", new Runnable() { public void run() { performGlobalAction(GLOBAL_ACTION_POWER_DIALOG); } }));
             L.add(pItem("Tắt máy…", new Runnable() { public void run() { lockPhone(); } }));
@@ -504,7 +504,7 @@ public class LockService extends AccessibilityService {
             } }));
             L.add(pItem("Khóa màn hình", new Runnable() { public void run() { lockPhone(); } }));
         } else if ("clk".equals(id)) {
-            /* Thông báo + widget làm thẳng bằng menu gốc, không nhảy về Desktop Mini */
+            /* Thông báo + widget làm thẳng bằng menu gốc, không nhảy về New OS */
             L.add(pText(new java.text.SimpleDateFormat("EEEE, dd/MM/yyyy", new java.util.Locale("vi", "VN")).format(new java.util.Date())));
             int b = topBar == null ? -1 : topBar.battery();
             L.add(pText("Pin: " + (b >= 0 ? b + "%" : "không rõ") + "   ·   " + (topBar == null ? "" : topBar.ram())));
@@ -1029,7 +1029,7 @@ public class LockService extends AccessibilityService {
     private WindowManager.LayoutParams dockLp;
     private static final int DOCK_GAP_DP = 0;
     private static volatile int dockBase = 46;
-    /** Cỡ người dùng chỉnh (chỉ áp dụng khi đang ở Desktop Mini). */
+    /** Cỡ người dùng chỉnh (chỉ áp dụng khi đang ở New OS). */
     private static volatile int userDockBase = 30; /* Dock ở màn hình chính cố định 66% (66% của 45px ≈ 30px), không còn chỉnh được */
     /** Khi đang mở app khác, Dock nổi bắt buộc cố định 53% (53% của 45px ≈ 24px), không theo cỡ người dùng. */
     private static final int EXT_DOCK_BASE = 24;

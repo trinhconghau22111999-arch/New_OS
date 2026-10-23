@@ -643,7 +643,7 @@ public class LauncherBridge {
                 if (LockService.inst != null && Build.VERSION.SDK_INT >= 28) return LockService.inst.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
                 act.go(new Intent(android.app.admin.DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
                     .putExtra(android.app.admin.DevicePolicyManager.EXTRA_DEVICE_ADMIN, cn)
-                    .putExtra(android.app.admin.DevicePolicyManager.EXTRA_ADD_EXPLANATION, "Cho phép Desktop Mini tắt màn hình khi bạn bấm Tắt máy. Quyền này chỉ dùng để khóa màn hình."));
+                    .putExtra(android.app.admin.DevicePolicyManager.EXTRA_ADD_EXPLANATION, "Cho phép New OS tắt màn hình khi bạn bấm Tắt máy. Quyền này chỉ dùng để khóa màn hình."));
             } catch (Exception e) { }
             return false;
         }
@@ -1110,7 +1110,7 @@ public class LauncherBridge {
                 return true;
             } catch (Exception e) { return false; }
         }
-        /** Chốt video: lưu vào thư mục video của máy (Movies/Desktop Mini) và đưa vào thư viện. Trả đường dẫn/URI, rỗng nếu lỗi. */
+        /** Chốt video: lưu vào thư mục video của máy (Movies/New OS) và đưa vào thư viện. Trả đường dẫn/URI, rỗng nếu lỗi. */
         @JavascriptInterface public String videoEnd() {
             File tmp = vidTmp; vidTmp = null;
             try {
@@ -1123,7 +1123,7 @@ public class LauncherBridge {
                     ContentValues v = new ContentValues();
                     v.put(MediaStore.Video.Media.DISPLAY_NAME, nm);
                     v.put(MediaStore.Video.Media.MIME_TYPE, mt);
-                    v.put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/Desktop Mini");
+                    v.put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/New OS");
                     v.put(MediaStore.Video.Media.IS_PENDING, 1);
                     Uri u = act.getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, v);
                     if (u == null) return "";
@@ -1135,7 +1135,7 @@ public class LauncherBridge {
                     act.getContentResolver().update(u, v, null, null);
                     return u.toString();
                 }
-                File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "Desktop Mini"); dir.mkdirs();
+                File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "New OS"); dir.mkdirs();
                 File f = new File(dir, nm);
                 java.io.FileInputStream in2 = new java.io.FileInputStream(tmp);
                 FileOutputStream os2 = new FileOutputStream(f);
@@ -1154,7 +1154,7 @@ public class LauncherBridge {
             } catch (Exception e) { return ""; }
             finally { try { if (tmp != null) tmp.delete(); } catch (Exception x) { } }
         }
-        /** Lưu ảnh chụp (dataUrl JPEG) vào thư viện ảnh của máy, thư mục Pictures/Desktop Mini. Trả đường dẫn/URI, rỗng nếu lỗi. */
+        /** Lưu ảnh chụp (dataUrl JPEG) vào thư viện ảnh của máy, thư mục Pictures/New OS. Trả đường dẫn/URI, rỗng nếu lỗi. */
         @JavascriptInterface public String savePhoto(String dataUrl) {
             try {
                 byte[] by = Base64.decode(dataUrl.substring(dataUrl.indexOf(',') + 1), Base64.DEFAULT);
@@ -1163,7 +1163,7 @@ public class LauncherBridge {
                     ContentValues v = new ContentValues();
                     v.put(MediaStore.Images.Media.DISPLAY_NAME, nm);
                     v.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-                    v.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Desktop Mini");
+                    v.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/New OS");
                     v.put(MediaStore.Images.Media.IS_PENDING, 1);
                     Uri u = act.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, v);
                     if (u == null) return "";
@@ -1173,7 +1173,7 @@ public class LauncherBridge {
                     act.getContentResolver().update(u, v, null, null);
                     return u.toString();
                 }
-                File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Desktop Mini"); dir.mkdirs();
+                File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "New OS"); dir.mkdirs();
                 File f = new File(dir, nm);
                 FileOutputStream os2 = new FileOutputStream(f); os2.write(by); os2.close();
                 /* Đưa vào MediaStore ngay để có id (mở thẳng ảnh vừa chụp trong app Ảnh) */
@@ -1326,7 +1326,7 @@ public class LauncherBridge {
                 if ("apk".equals(ext)) {
                     if (Build.VERSION.SDK_INT >= 26 && !act.getPackageManager().canRequestPackageInstalls()) {
                         act.go(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + act.getPackageName())));
-                        return "Hãy bật \"Cho phép từ nguồn này\" cho Desktop Mini rồi bấm lại tệp APK";
+                        return "Hãy bật \"Cho phép từ nguồn này\" cho New OS rồi bấm lại tệp APK";
                     }
                     return viewUri(u, "application/vnd.android.package-archive") ? "" : "Không mở được trình cài đặt";
                 }

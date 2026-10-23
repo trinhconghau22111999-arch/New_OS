@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Đo thời gian màn hình SÁNG (đang sử dụng máy) trong ngày, tính cho cả lúc dùng app khác, không chỉ lúc Desktop Mini đang hiện.
+ * Đo thời gian màn hình SÁNG (đang sử dụng máy) trong ngày, tính cho cả lúc dùng app khác, không chỉ lúc New OS đang hiện.
  * Nghe sự kiện bật/tắt màn hình, cộng dồn vào SharedPreferences "ontime", sang ngày mới thì tính lại từ 0.
  */
 final class ScreenTime {

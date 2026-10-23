@@ -22,7 +22,7 @@ function buildCamera(b,w){
       if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){say('Thiết bị này không hỗ trợ camera trong ứng dụng.');return}
       let s;
       try{s=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:face},width:{ideal:2560},height:{ideal:1920}}})}
-      catch(e){if(my===tok)say('Chưa mở được Camera. Hãy cấp quyền Camera cho Desktop Mini rồi bấm vào đây để thử lại.');return}
+      catch(e){if(my===tok)say('Chưa mở được Camera. Hãy cấp quyền Camera cho New OS rồi bấm vào đây để thử lại.');return}
       if(my!==tok||!w.isConnected){s.getTracks().forEach(t=>t.stop());return}
       stream=s; vid.srcObject=s;
       const p=vid.play(); if(p&&p.catch)p.catch(()=>{});
@@ -79,7 +79,7 @@ function buildCamera(b,w){
     if(!(A&&A.videoBegin)){warn('Không quay được','Hãy cập nhật ứng dụng.');return}
     let tracks=stream.getVideoTracks().slice();
     try{recAud=await navigator.mediaDevices.getUserMedia({audio:true,video:false}); tracks=tracks.concat(recAud.getAudioTracks())}
-    catch(e){recAud=null; warn('Quay không có tiếng','Chưa cấp quyền Micro cho Desktop Mini.')}
+    catch(e){recAud=null; warn('Quay không có tiếng','Chưa cấp quyền Micro cho New OS.')}
     if(!stream){if(recAud){recAud.getTracks().forEach(t=>t.stop());recAud=null}return}
     const types=['video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
     const mt=types.find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';

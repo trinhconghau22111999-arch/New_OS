@@ -81,7 +81,7 @@
 .cm .cmsw:disabled{opacity:.4}
 @media (max-height:560px){.cm{padding:34px 14px 10px}.cm h2{margin:0 0 6px;font-size:15px}.cm .cmst{margin-top:6px}.cm .cmbt{margin-top:8px}}
 </style>
-<title>Desktop Mini</title>
+<title>New OS</title>
 <style>
 /* Layout: một màn hình bo góc. Menu bar trong suốt, dock kính nổi dưới đáy, cửa sổ bo lớn có đèn giao thông, các lớp phủ (Launchpad, Mission Control, khóa) phủ lên trên. */
 :root{
@@ -1278,7 +1278,7 @@ window.addEventListener('unhandledrejection',e=>{try{const A=window.AndroidLaunc
 const NSYNC=new Set(); let nsRaf=0;
 function kickSync(){if(nsRaf)return;nsRaf=requestAnimationFrame(()=>{nsRaf=0;NSYNC.forEach(f=>{try{f()}catch(e){}})})}
 /* Một bộ đếm chung cho các cửa sổ web nhúng và Gecko (trước đây mỗi cửa sổ có một setInterval 90ms riêng).
-   Đang dùng: 90ms/lần như cũ. Desktop Mini ra nền (document.hidden): chỉ thức dậy 1 lần/giây và không làm gì. Hết cửa sổ thì tự dừng. */
+   Đang dùng: 90ms/lần như cũ. New OS ra nền (document.hidden): chỉ thức dậy 1 lần/giây và không làm gì. Hết cửa sổ thì tự dừng. */
 /* Cửa sổ web nhúng (YouTube, Gecko...) là view native nằm đè lên HTML nên chỉ hiện được khi cửa sổ ở trên cùng; nếu ẩn thì chỉ còn nền đen.
    Cửa sổ không được chọn nhưng KHÔNG bị cửa sổ nào khác che (kể cả che một phần) thì vẫn cho hiện để không bị đen, và video đang phát không bị tạm dừng; nhiều cửa sổ web nhúng không chồng nhau hiện song song được. */
 function winFree(w){
@@ -1908,7 +1908,7 @@ function openApp(id,arg){
   if(id==='launchpad'){toggleLP();return}
   if(typeof id==='string'&&id.indexOf('x:')===0){if(typeof lpOn!=='undefined'&&lpOn)closeLP();extLaunch(id.slice(2));return}
   if(!APPS[id])return;
-  /* "Trình duyệt" và "Ổ mềm" chạy bằng Gecko nên nằm trong app phụ riêng (không dùng chung WebView với giao diện này): bấm biểu tượng là mở app phụ (thấy Dock như app ngoài), thoát thì quay về Desktop Mini. Chưa cài thì Android hỏi cài. */
+  /* "Trình duyệt" và "Ổ mềm" chạy bằng Gecko nên nằm trong app phụ riêng (không dùng chung WebView với giao diện này): bấm biểu tượng là mở app phụ (thấy Dock như app ngoài), thoát thì quay về New OS. Chưa cài thì Android hỏi cài. */
   if((id==='browser'||id==='omem')&&window.AndroidLauncher&&window.AndroidLauncher.openCompanion){
     try{window.AndroidLauncher.openCompanion(id,typeof arg==='string'?arg:(arg&&(arg.url||arg.profile))||'',!!(arg&&arg.upload))}catch(e){}
     return;
@@ -3218,7 +3218,7 @@ const NEWMAP={files:['Thư mục mới','.nf'],notes:['Ghi chú mới','.nn'],ma
 function musHalt(){MUS.playing=false;clearInterval(MUS.timer);bus.emit('music')}
 function homeDefaultNow(){try{const A=window.AndroidLauncher;return !!(A&&A.isHomeDefault&&A.isHomeDefault())}catch(e){return false}}
 function homeItem(){
-  if(homeDefaultNow())return {t:'Desktop Mini là màn hình chính mặc định ✓',dis:true};
+  if(homeDefaultNow())return {t:'New OS là màn hình chính mặc định ✓',dis:true};
   return {t:'Đặt làm launcher mặc định…',fn:()=>{
     const A=window.AndroidLauncher;
     if(A&&A.openSetup)A.openSetup('home');
@@ -3231,7 +3231,7 @@ function buildMenu(key){
   const ta=w&&$('textarea',w);
   const nw=id&&NEWMAP[id];
   const M={
-    apple:[{t:'Giới thiệu về Desktop Mini',fn:()=>openApp('about')},'-',{t:'Cài đặt hệ thống…',fn:()=>openApp('settings')},{t:'Buộc thoát…',fn:()=>openApp('forcequit')},'-',homeItem(),{t:'Khởi động lại launcher này',fn:()=>restartLauncher()},{t:'Tắt máy…',fn:()=>shutNow()},{t:'Tắt nguồn…',fn:()=>powerOffNow()},{t:'Khởi động lại…',fn:()=>restartNow()}],
+    apple:[{t:'Giới thiệu về New OS',fn:()=>openApp('about')},'-',{t:'Cài đặt hệ thống…',fn:()=>openApp('settings')},{t:'Buộc thoát…',fn:()=>openApp('forcequit')},'-',homeItem(),{t:'Khởi động lại launcher này',fn:()=>restartLauncher()},{t:'Tắt máy…',fn:()=>shutNow()},{t:'Tắt nguồn…',fn:()=>powerOffNow()},{t:'Khởi động lại…',fn:()=>restartNow()}],
     app:w?[{t:'Giới thiệu về '+nm,fn:()=>openApp('about')},'-',{t:'Ẩn '+nm,fn:()=>minWin(w)},'-',{t:'Thoát '+nm,fn:()=>{if(id==='music')musHalt();closeWin(w)}}]:[{t:'Mở Tệp',fn:()=>openApp('files')}],
     file:(nw?[{t:nw[0],fn:()=>{const x=$(nw[1],w);if(x)x.click()}},'-']:[]).concat([{t:'Mở Ghi chú',fn:()=>openApp('notes')},'-',{t:'Đóng cửa sổ',fn:()=>closeWin(w),dis:!w}]),
     edit:[{t:'Hoàn tác',dis:true},{t:'Làm lại',dis:true},'-',{t:'Cắt',fn:()=>{ta.focus();document.execCommand('cut')},dis:!ta},{t:'Sao chép',fn:()=>{ta.focus();document.execCommand('copy')},dis:!ta},{t:'Dán',dis:true},'-',{t:'Chọn tất cả',fn:()=>{ta.focus();ta.select()},dis:!ta}],
@@ -3272,7 +3272,7 @@ function toggleRot(){
   const A=window.AndroidLauncher, want=!rotOn();
   if(A&&A.setAutoRotate){
     let ok=false; try{ok=A.setAutoRotate(want)}catch(e){}
-    if(!ok)notify({app:'Hệ thống',title:'Cần quyền sửa cài đặt hệ thống',body:'Cấp quyền "Sửa cài đặt hệ thống" cho Desktop Mini rồi bấm lại Tự xoay.',icon:'settings'});
+    if(!ok)notify({app:'Hệ thống',title:'Cần quyền sửa cài đặt hệ thống',body:'Cấp quyền "Sửa cài đặt hệ thống" cho New OS rồi bấm lại Tự xoay.',icon:'settings'});
   }else setPref('rot',want);
   bus.emit('ui');
 }
@@ -3728,7 +3728,7 @@ sq.addEventListener('keydown',e=>{
     if(ok){
       if(!reduce){const f=document.createElement('div');f.className='shotflash';stage.appendChild(f);setTimeout(()=>f.remove(),420)}
       notify({app:'Ảnh chụp màn hình',title:'Đã lưu ảnh chụp màn hình',body:'Xem trong ứng dụng Ảnh › Ảnh chụp màn hình',icon:'photos',fn:()=>openApp('photos')});
-    }else notify({app:'Ảnh chụp màn hình',title:'Không chụp được màn hình',body:'Hãy cấp quyền ảnh/tệp cho Desktop Mini rồi thử lại.',icon:'settings'});
+    }else notify({app:'Ảnh chụp màn hình',title:'Không chụp được màn hình',body:'Hãy cấp quyền ảnh/tệp cho New OS rồi thử lại.',icon:'settings'});
   };
   shotBtn.addEventListener('click',e=>{
     e.stopPropagation(); if(shotBusy)return;
@@ -4008,7 +4008,7 @@ function greet(){
   if(greeted)return; greeted=true;
   if(!lsGet('dm-welcome')){
     lsSet('dm-welcome','1');
-    setTimeout(()=>{deliverMail({from:'Nhóm Desktop Mini',addr:'chao@desktopmini.example',subj:'Chào mừng bạn đến Desktop Mini',body:'Chúc bạn có buổi làm việc vui vẻ. Thử bấm F4 để mở Launchpad, F3 để xem Mission Control, hoặc Ctrl + Space để tìm kiếm bằng Spotlight.'});notify({app:'Thư',title:'Chào mừng bạn đến Desktop Mini',body:'Nhóm Desktop Mini',icon:'mail'})},6000);
+    setTimeout(()=>{deliverMail({from:'Nhóm New OS',addr:'chao@desktopmini.example',subj:'Chào mừng bạn đến New OS',body:'Chúc bạn có buổi làm việc vui vẻ. Thử bấm F4 để mở Launchpad, F3 để xem Mission Control, hoặc Ctrl + Space để tìm kiếm bằng Spotlight.'});notify({app:'Thư',title:'Chào mừng bạn đến New OS',body:'Nhóm New OS',icon:'mail'})},6000);
   }
 }
 
@@ -4839,7 +4839,7 @@ if(window.AndroidLauncher){(function(){
   function loadPhotos(){
     const l=safe(()=>JSON.parse(A.getPhotos()),[]);
     PH.length=0; l.forEach(p=>{const e=['','','','','',p.n];e.pid=p.id;
-      /* Phân loại theo thư mục/tên tệp: ảnh chụp màn hình (Screenshots) và ảnh chụp bằng camera (DCIM/Camera, Pictures/Desktop Mini) */
+      /* Phân loại theo thư mục/tên tệp: ảnh chụp màn hình (Screenshots) và ảnh chụp bằng camera (DCIM/Camera, Pictures/New OS) */
       const lp=((p.p||'')+' '+(p.n||'')).toLowerCase();
       if(/screenshot|screen_shot|screen-shot|chụp màn hình|chup man hinh|webandr/.test(lp))e.k='shot';
       else if(/dcim\/camera|dcim\/100|desktop mini|desktopmini/.test(lp)||/^(img|pxl)_\d{8}_\d{6}/.test((p.n||'').toLowerCase()))e.k='cam';

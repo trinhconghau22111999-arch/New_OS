@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 /** Chuyển thông báo của các ứng dụng khác vào Trung tâm thông báo. */
 public class NotifService extends NotificationListenerService {
-    /* Thông báo gần đây, để menu gốc "Thông báo" trên thanh menu nổi hiện được mà không cần mở Desktop Mini */
+    /* Thông báo gần đây, để menu gốc "Thông báo" trên thanh menu nổi hiện được mà không cần mở New OS */
     private static final java.util.ArrayList<String[]> RECENT = new java.util.ArrayList<String[]>();
     static synchronized void addRecent(String app, String pkg, String t, String b) {
         for (int i = RECENT.size() - 1; i >= 0; i--) { String[] r = RECENT.get(i); if (r[1].equals(pkg) && r[2].equals(t) && r[3].equals(b)) RECENT.remove(i); }

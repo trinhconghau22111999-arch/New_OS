@@ -19,7 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Thùng rác thật của Desktop Mini: mọi tệp / ảnh / video / nhạc bị xóa được chuyển (hoặc chép) vào thư mục riêng của ứng dụng
+ * Thùng rác thật của New OS: mọi tệp / ảnh / video / nhạc bị xóa được chuyển (hoặc chép) vào thư mục riêng của ứng dụng
  * kèm 1 tệp chỉ mục index.json; giữ 7 ngày rồi tự xóa hẳn. Khôi phục = đưa về đúng chỗ cũ (hoặc vào thư viện nếu thiếu quyền).
  */
 final class TrashStore {

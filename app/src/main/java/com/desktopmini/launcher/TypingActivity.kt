@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * Màn hình riêng cũ của "Gõ văn bản" (Desktop Mini giờ mở app này trong cửa sổ, xem WordHost + MainActivity).
+ * Màn hình riêng cũ của "Gõ văn bản" (New OS giờ mở app này trong cửa sổ, xem WordHost + MainActivity).
  * Giữ lại để mở toàn màn hình khi cần; dùng chung phần lõi WordHost.
  */
 class TypingActivity : Activity() {
