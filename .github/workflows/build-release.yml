@@ -9,9 +9,6 @@ on:
         description: 'CPU đóng gói, ngăn cách bằng dấu phẩy (mặc định x86)'
         default: 'x86'
 
-permissions:
-  contents: write
-
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: true
@@ -48,11 +45,9 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: gradle assembleRelease --no-daemon -Pabis="${{ github.event.inputs.abis || 'x86' }}"
 
-      - name: Đăng APK lên Release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          TAG="apk-${{ github.run_number }}"
-          gh release create "$TAG" app/build/outputs/apk/release/*.apk \
-            --title "APK build #${{ github.run_number }}" \
-            --notes "Commit ${{ github.sha }}"
+      - name: Lưu APK để tải
+        uses: actions/upload-artifact@v4
+        with:
+          name: DesktopMiniLauncher-apk
+          path: app/build/outputs/apk/release/*.apk
+          retention-days: 7
