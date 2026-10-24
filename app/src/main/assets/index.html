@@ -1334,7 +1334,6 @@ const ICONS={
   recorder:{bg:'linear-gradient(#b25cff,#4b22c9)',g:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3.5" width="6" height="11" rx="3" fill="#fff"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v2.5"/></svg>'},
   clock:{bg:'linear-gradient(#2a2b30,#0d0d0f)',g:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#f6f6f8"/><path d="M12 6.5V12l3.6 2.2" fill="none" stroke="#1d1d1f" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="1.1" fill="#ff3b30"/></svg>'},
   settings:{bg:'linear-gradient(#c5c8cf,#6f727b)',g:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.4" fill="none" stroke="#fff" stroke-width="3.8" stroke-dasharray="3.3 3.3"/><circle cx="12" cy="12" r="5.8" fill="#fff"/><circle cx="12" cy="12" r="2.4" fill="#7d808a"/></svg>'},
-  omem:{bg:'linear-gradient(#b9a2ff,#5b3fe6)',g:'<svg viewBox="0 0 24 24"><path fill="#fff" d="M7.2 18.2a4.1 4.1 0 0 1-.7-8.1A5.6 5.6 0 0 1 17.2 9.4a4.4 4.4 0 0 1 .4 8.8z"/></svg>'},
   drive:{bg:'#fff',g:'<svg viewBox="0 0 24 24"><path fill="#ffba00" d="M9 3.5h6l6.6 11.4h-6z"/><path fill="#0da960" d="M9 3.5L2.4 14.9l3 5.1L12 8.6z"/><path fill="#2684fc" d="M5.4 20h13.2l3-5.1H8.4z"/></svg>'},
   zalo:{bg:'#0068ff',g:'<svg viewBox="0 0 24 24"><text x="12" y="15.6" text-anchor="middle" font-size="8.6" font-weight="800" fill="#fff" font-family="Arial,sans-serif">Zalo</text></svg>'},
   facebook:{bg:'#1877f2',g:'<svg viewBox="0 0 24 24"><path fill="#fff" d="M13.4 21v-7.6h2.6l.4-3h-3V8.5c0-.9.3-1.5 1.6-1.5h1.5V4.3C16.2 4.2 15.3 4 14.2 4 12 4 10.4 5.3 10.4 7.8v2.6H7.8v3h2.6V21z"/></svg>'},
@@ -1465,7 +1464,6 @@ const APPS={
   recorder:{name:'Ghi âm',w:380,h:600,minW:320,minH:440,build:buildRecorder,dark:true},
   camera:{name:'Webcam',w:380,h:620,minW:320,minH:460,build:buildCamera,dark:true},
   settings:{name:'Cài đặt hệ thống',w:680,h:440,minW:420,minH:300,build:buildSettings},
-  omem:{name:'Ổ mềm',w:880,h:540,minW:360,minH:300,build:buildDrive3Stub},
   zalo:{name:'Zalo web',w:880,h:540,minW:360,minH:300,build:(b,w)=>buildWebApp(b,w,'zalo','https://chat.zalo.me/','Zalo web',{compact:true})},
   facebook:{name:'Facebook web',w:880,h:540,minW:360,minH:300,build:(b,w)=>buildWebApp(b,w,'facebook','https://www.facebook.com/','Facebook web',{compact:true})},
   trash:{name:'Thùng rác',w:520,h:340,minW:320,minH:240,build:buildTrash},
@@ -1483,8 +1481,8 @@ function extReg(pkg,label,icon,save){
   return id;
 }
 Object.keys(EXTINFO).forEach(k=>{const o=EXTINFO[k];if(o)extReg(k,o.label,o.icon)});
-const LP_APPS=['files','downloads','browser','webbrowser','youtube','mail','calendar','photos','camera','music','notes','typing','msword','msexcel','msppt','msoffice','calc','clock','recorder','omem','zalo','facebook','settings','trash'];
-const DOCK_DEF=['launchpad','files','webbrowser','youtube','mail','photos','camera','notes','omem','zalo','facebook','settings'];
+const LP_APPS=['files','downloads','webbrowser','youtube','mail','calendar','photos','camera','music','notes','typing','msword','msexcel','msppt','msoffice','calc','clock','recorder','zalo','facebook','settings','trash'];
+const DOCK_DEF=['launchpad','files','webbrowser','youtube','mail','photos','camera','notes','zalo','facebook','settings'];
 /* Dock và màn hình desktop do người dùng tự sắp xếp (lưu lại để mở app lần sau vẫn giữ) */
 const DOCK_GONE=['browser','calendar','music','typing','msword','msexcel','msppt','msoffice','calc','clock','recorder','drive','downloads'];
 const DOCK=(()=>{let s=jget('dm-dock',null);if(Array.isArray(s)&&!jget('dm-dock-v2',false)){s=s.filter(id=>DOCK_GONE.indexOf(id)<0);jset('dm-dock',s);jset('dm-dock-v2',true)}
@@ -1898,11 +1896,8 @@ function openApp(id,arg){
   if(id==='launchpad'){toggleLP();return}
   if(typeof id==='string'&&id.indexOf('x:')===0){if(typeof lpOn!=='undefined'&&lpOn)closeLP();extLaunch(id.slice(2));return}
   if(!APPS[id])return;
-  /* "Trình duyệt" và "Ổ mềm" chạy bằng Gecko nên nằm trong app phụ riêng (không dùng chung WebView với giao diện này): bấm biểu tượng là mở app phụ (thấy Dock như app ngoài), thoát thì quay về New OS. Chưa cài thì Android hỏi cài. */
-  if((id==='browser'||id==='omem')&&window.AndroidLauncher&&window.AndroidLauncher.openCompanion){
-    try{window.AndroidLauncher.openCompanion(id,typeof arg==='string'?arg:(arg&&(arg.url||arg.profile))||'',!!(arg&&arg.upload))}catch(e){}
-    return;
-  }
+  /* "Trình duyệt" cũ (Gecko, app phụ đã bỏ) chuyển sang "Duyệt web" */
+  if(id==='browser'){openApp('webbrowser',arg);return}
   /* "YouTube", "Gõ văn bản" chạy trong cửa sổ như các app khác (WebView gốc nhúng) */
   const w=wins[id];
   if(w){
@@ -2345,8 +2340,6 @@ function buildNotes(b,w,arg){
   return {open(a){if(a&&a.file)fromFile(a.file)}};
 }
 
-/* ---------- Ổ mềm (Drive 3 hồ sơ): Android < 9 chạy NHÚNG trong cửa sổ như Duyệt web (thấy Dock); chọn hồ sơ Ảnh / Video / Tệp, đổi hồ sơ ngay trên thanh tiêu đề ---------- */
-function buildDrive3Stub(b,w){b.innerHTML='<div class="app"><div class="bar"><strong class="t">Ổ mềm</strong></div><div class="none">Ổ mềm chạy trong app phụ riêng, chỉ có trong ứng dụng Android</div></div>';return {}}
 
 function buildCalc(b,w){return lazyBuild('calc','buildCalc',b,w)}
 /* ---------- Cài đặt hệ thống ---------- */
@@ -3483,8 +3476,8 @@ sq.addEventListener('keydown',e=>{
     [['lich thang','am lich','mo lich','lich'],'calendar'],[['thu vien anh','album','bo suu tap','xem anh','xem hinh','hinh anh','mo anh','mo hinh','ung dung anh'],'photos'],
     [['webcam','may anh','camera','chup anh','chup hinh','tu suong','selfie'],'camera'],[['nhac','may nghe nhac','trinh phat nhac'],'music'],
     [['go van ban','soan van ban','soan thao'],'typing'],[['word online'],'msword'],[['excel'],'msexcel'],[['powerpoint','power point','trinh chieu'],'msppt'],[['office'],'msoffice'],
-    [['o mem','omem'],'omem'],[['zalo'],'zalo'],[['facebook','phay bu','fb'],'facebook'],
-    [['duyet web'],'webbrowser'],[['trinh duyet','firefox'],'browser'],[['youtube','you tube','du tup'],'youtube'],
+    [['zalo'],'zalo'],[['facebook','phay bu','fb'],'facebook'],
+    [['duyet web'],'webbrowser'],[['trinh duyet','firefox'],'webbrowser'],[['youtube','you tube','du tup'],'youtube'],
     [['cai dat'],'settings'],[['launchpad','tat ca ung dung','danh sach ung dung'],'launchpad']
   ];
   const seqIndex=(t,p,from)=>{for(let i=from||0;i+p.length<=t.length;i++){let ok=true;for(let k=0;k<p.length;k++)if(t[i+k]!==p[k]){ok=false;break}if(ok)return i}return -1};

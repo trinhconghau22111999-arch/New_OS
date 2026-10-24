@@ -324,7 +324,7 @@ public class LockService extends AccessibilityService {
             root = w.getRoot();
             if (root == null || root.getPackageName() == null) return false;
             String pk = root.getPackageName().toString();
-            return pk.equals(getPackageName()) || pk.equals(MainActivity.WEB_PKG) || pk.equals("com.android.settings") || pk.equals("com.android.systemui");
+            return pk.equals(getPackageName()) || pk.equals("com.android.settings") || pk.equals("com.android.systemui");
         } catch (Throwable t) { return false; }
         finally { if (root != null) { try { root.recycle(); } catch (Throwable t) { } } }
     }

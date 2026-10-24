@@ -709,7 +709,6 @@ public class MainActivity extends Activity {
     }
     @Override protected void onResume() {
         super.onResume();
-        maybeAskCompanion();
         powerRxStart();
         inFg = true; lastTouchAt = android.os.SystemClock.elapsedRealtime();
         imeUp = false; hideBars(); LockService.launcherResumed(); root.postDelayed(new Runnable() { public void run() { healA11y(false); } }, 2500); reportDockGap(); root.postDelayed(new Runnable() { public void run() { reportDockGap(); } }, 700); prefetchApps(); scanNewMedia(); startMediaWatch();
@@ -1112,85 +1111,10 @@ public class MainActivity extends Activity {
         return arr;
     }
 
-    /* ================= App phụ "Trình duyệt + Ổ mềm" (Gecko), tách riêng khỏi WebView giao diện =================
-     * Hai app này dùng lõi Gecko (Firefox) nên chạy trong app riêng (com.desktopmini.web); app chính chỉ dùng WebView hệ thống.
-     * APK app phụ đóng gói sẵn trong assets/web/web.apk, app chính hỏi cài (hoặc cập nhật) ngay lần mở đầu tiên. Biểu tượng vẫn nằm trên Dock/Launchpad như cũ. */
-    static final String WEB_PKG = "com.newos.web";
-    private boolean companionAsked;
     volatile boolean htmlEditing = false;
 
     void toastLong(final String msg) {
         runOnUiThread(new Runnable() { public void run() { android.widget.Toast.makeText(MainActivity.this, msg, android.widget.Toast.LENGTH_LONG).show(); } });
-    }
-    private int myVersion() { try { return getPackageManager().getPackageInfo(getPackageName(), 0).versionCode; } catch (Throwable t) { return 0; } }
-    /** Số phiên bản app phụ đã cài; -1 nếu chưa cài. */
-    int companionVersion() { try { return getPackageManager().getPackageInfo(WEB_PKG, 0).versionCode; } catch (Throwable t) { return -1; } }
-    private boolean hasBundledCompanion() {
-        try { String[] l = getAssets().list("web"); if (l != null) for (String n : l) if (n.equals("web.apk")) return true; } catch (Throwable t) { }
-        return false;
-    }
-
-    /** Mở "Trình duyệt" (which = "browser", arg = địa chỉ) hoặc "Ổ mềm" (which = "omem", arg = hồ sơ anh/video/tep). Chưa cài app phụ thì hỏi cài. */
-    void openCompanion(String which, String arg, boolean upload) {
-        if (companionVersion() < 0) { toastLong("Chưa cài app phụ Trình duyệt + Ổ mềm. Hãy cài file web-release.apk trong cùng bản build."); return; }
-        boolean om = "omem".equals(which);
-        Intent i = new Intent();
-        i.setClassName(WEB_PKG, WEB_PKG + (om ? ".OmemActivity" : ".BrowserActivity"));
-        if (om) { if (arg != null && arg.length() > 0) i.putExtra("profile", arg); i.putExtra("upload", upload); }
-        else if (arg != null && (arg.startsWith("http://") || arg.startsWith("https://"))) i.putExtra("url", arg);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        try { startActivity(i); } catch (Throwable e) { toastLong("Không mở được app phụ (" + e.getClass().getSimpleName() + "), hãy cài lại web-release.apk."); }
-    }
-
-    /** Lần mở đầu của mỗi bản app: chưa cài hoặc app phụ cũ hơn thì hỏi cài (mỗi bản chỉ hỏi một lần; bấm biểu tượng sẽ hỏi lại). */
-    private void maybeAskCompanion() {
-        if (companionAsked || !hasBundledCompanion()) return;
-        companionAsked = true;
-        if (companionVersion() >= myVersion()) return;
-        android.content.SharedPreferences sp = getSharedPreferences("dm_companion", MODE_PRIVATE);
-        if (sp.getInt("asked", 0) == myVersion()) return;
-        sp.edit().putInt("asked", myVersion()).apply();
-        root.postDelayed(new Runnable() { public void run() { askInstallCompanion(); } }, 3500);
-    }
-
-    private void askInstallCompanion() {
-        if (!hasBundledCompanion()) { toastLong("Bản này chưa kèm app phụ Trình duyệt / Ổ mềm."); return; }
-        final boolean update = companionVersion() >= 0;
-        try {
-            new android.app.AlertDialog.Builder(this)
-                .setTitle(update ? "Cập nhật app phụ" : "Cài app phụ Trình duyệt + Ổ mềm")
-                .setMessage("\"Trình duyệt\" và \"Ổ mềm\" chạy trong một app phụ riêng, không dùng chung WebView với giao diện chính nên hết xung đột/văng. App phụ đi kèm sẵn trong New OS.\n\nBấm \"Cài ngay\" rồi xác nhận cài đặt của Android (cần cho phép cài từ nguồn này nếu máy hỏi). Biểu tượng vẫn nằm trên Dock/Launchpad như cũ.")
-                .setPositiveButton("Cài ngay", new android.content.DialogInterface.OnClickListener() { public void onClick(android.content.DialogInterface d, int w) { installCompanion(); } })
-                .setNegativeButton("Để sau", null)
-                .show();
-        } catch (Throwable e) { }
-    }
-
-    private void installCompanion() {
-        final java.io.File dir = new java.io.File(getCacheDir(), "shared"); dir.mkdirs();
-        final java.io.File f = new java.io.File(dir, "web.apk");
-        if (dir.getUsableSpace() < 300L * 1024 * 1024) { toastLong("Không đủ bộ nhớ trống (cần khoảng 300 MB) để cài app phụ. Hãy dọn bớt rồi thử lại."); return; }
-        final android.app.ProgressDialog pd = new android.app.ProgressDialog(this);
-        pd.setMessage("Đang chuẩn bị app phụ, vui lòng chờ…");
-        pd.setCancelable(false);
-        try { pd.show(); } catch (Throwable t) { }
-        new Thread(new Runnable() { public void run() {
-            boolean ok = false;
-            java.io.File tmp = new java.io.File(dir, "web.apk.tmp");
-            try {
-                java.io.InputStream in = getAssets().open("web/web.apk");
-                java.io.FileOutputStream out = new java.io.FileOutputStream(tmp);
-                try { byte[] buf = new byte[1 << 16]; int n; while ((n = in.read(buf)) > 0) out.write(buf, 0, n); out.flush(); ok = tmp.length() > 1024 * 1024; }
-                finally { try { out.close(); } catch (Throwable t) { } try { in.close(); } catch (Throwable t) { } }
-                if (ok) { f.delete(); ok = tmp.renameTo(f); }
-            } catch (Throwable e) { ok = false; }
-            if (!ok) { try { tmp.delete(); } catch (Throwable t) { } }
-            final boolean done = ok;
-            runOnUiThread(new Runnable() { public void run() {
-                try { pd.dismiss(); } catch (Throwable t) { }
-                if (done) launchApkInstall(f, false); else toastLong("Không chuẩn bị được app phụ.");
-            } });
-        } }, "companion-install").start();
     }
 
     /** Mở app con "Gõ văn bản". */

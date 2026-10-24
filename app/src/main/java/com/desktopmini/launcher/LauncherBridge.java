@@ -784,8 +784,6 @@ public class LauncherBridge {
         @JavascriptInterface public void aiStop() { act.runOnUiThread(new Runnable() { public void run() { act.aiStop(); } }); }
         /** Nút AI: hủy nghe, không trả kết quả. */
         @JavascriptInterface public void aiCancel() { act.runOnUiThread(new Runnable() { public void run() { act.aiCancel(); } }); }
-        /** Mở "Trình duyệt" (which="browser", arg=địa chỉ) hoặc "Ổ mềm" (which="omem", arg=hồ sơ anh/video/tep) trong app phụ riêng (Gecko). Chưa cài app phụ thì hỏi cài. */
-        @JavascriptInterface public void openCompanion(final String which, final String arg, final boolean upload) { act.runOnUiThread(new Runnable() { public void run() { act.openCompanion(which, arg, upload); } }); }
         /** Mở app con "Duyệt web" (trình duyệt mặc định của app); url có thể rỗng. */
         @JavascriptInterface public void openWebBrowser(String url) { act.openWeb(url); }
         /** Mở app con "YouTube" (chỉ YouTube, không thanh địa chỉ). */
