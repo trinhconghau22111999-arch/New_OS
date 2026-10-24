@@ -1,0 +1,25 @@
+{
+  "name": "new-os-desktop",
+  "productName": "New OS",
+  "version": "1.0.0",
+  "description": "New OS cho Windows 10 trở lên: bản PC (cửa sổ đầy đủ) và bản Widget (khung 1/4 màn hình gắn lên màn hình nền)",
+  "main": "main.js",
+  "mode": "pc",
+  "author": "New OS",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "prepare": "node scripts/prepare.js",
+    "start": "node scripts/prepare.js && electron . ",
+    "start:widget": "node scripts/prepare.js && electron . --widget",
+    "dist:pc": "node scripts/prepare.js && electron-builder --config electron-builder.pc.json --win",
+    "dist:widget": "node scripts/prepare.js && electron-builder --config electron-builder.widget.json --win"
+  },
+  "dependencies": {
+    "koffi": "^2.9.2"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  }
+}

@@ -1,0 +1,39 @@
+name: Build Windows (PC + Widget)
+
+on:
+  push:
+    branches: [main]
+    paths: ['desktop/**', 'app/src/main/assets/**', '.github/workflows/build-desktop.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: desktop-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: desktop
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Cài thư viện
+        run: |
+          npm version "1.0.${{ github.run_number }}" --no-git-tag-version
+          npm install
+      - name: Build bản PC
+        run: npm run dist:pc
+      - name: Build bản Widget
+        run: npm run dist:widget
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NewOS-Windows
+          path: |
+            desktop/dist/pc/*.exe
+            desktop/dist/widget/*.exe
+          retention-days: 7

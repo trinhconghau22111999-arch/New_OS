@@ -1,0 +1,10 @@
+{
+  "appId": "com.newos.widget",
+  "productName": "New OS Widget",
+  "artifactName": "NewOS-Widget-Setup-${version}.${ext}",
+  "directories": { "output": "dist/widget", "buildResources": "build" },
+  "files": ["main.js", "preload.js", "package.json", "www/**/*", "build/icon.png"],
+  "extraMetadata": { "mode": "widget" },
+  "win": { "target": [{ "target": "nsis", "arch": ["x64", "ia32"] }], "icon": "build/icon.png" },
+  "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": false, "language": "1066" }
+}

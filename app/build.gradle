@@ -19,9 +19,9 @@ android {
         def run = (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
         versionCode run
         versionName "1.0.${run}"
-        // Bản này chỉ dành cho máy Lenovo Yoga Book YB1-X90F (chip Intel, Android 32-bit): chỉ đóng gói x86 nên APK nhẹ hơn nhiều, nhưng KHÔNG cài được trên điện thoại ARM.
-        // Muốn đóng cho máy khác: -Pabis=arm64-v8a (hoặc nhập ở nút Run workflow), ví dụ 'arm64-v8a,x86_64,x86' cho cả ba loại CPU
-        def abis = ((project.findProperty('abis') ?: 'x86') as String).split(',').collect { it.trim() }.findAll { it }
+        // Chạy trên mọi máy Android 7.0 (API 24) trở lên: mặc định đóng gói đủ 4 loại CPU (ARM 32/64-bit, Intel 32/64-bit).
+        // Muốn APK nhẹ hơn cho một loại máy: -Pabis=x86 (ví dụ Lenovo Yoga Book) hoặc -Pabis=arm64-v8a
+        def abis = ((project.findProperty('abis') ?: 'armeabi-v7a,arm64-v8a,x86,x86_64') as String).split(',').collect { it.trim() }.findAll { it }
         ndk { abiFilters.addAll(abis) }
         // Chỉ giữ tài nguyên tiếng Việt + tiếng Anh của các thư viện (bỏ hàng chục ngôn ngữ không dùng) cho APK nhẹ hơn
         resConfigs 'vi', 'en'

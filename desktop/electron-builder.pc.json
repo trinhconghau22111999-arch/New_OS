@@ -1,0 +1,10 @@
+{
+  "appId": "com.newos.desktop",
+  "productName": "New OS PC",
+  "artifactName": "NewOS-PC-Setup-${version}.${ext}",
+  "directories": { "output": "dist/pc", "buildResources": "build" },
+  "files": ["main.js", "preload.js", "package.json", "www/**/*", "build/icon.png"],
+  "extraMetadata": { "mode": "pc" },
+  "win": { "target": [{ "target": "nsis", "arch": ["x64", "ia32"] }], "icon": "build/icon.png" },
+  "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "language": "1066" }
+}
